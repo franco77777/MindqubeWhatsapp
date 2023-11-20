@@ -116,6 +116,7 @@ public class Send {
                 .url(url)
 
                 .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Content-Type", "text/plain")
                 .build();
         Response response = client.newCall(request).execute();
         System.out.println("soy mapper");
