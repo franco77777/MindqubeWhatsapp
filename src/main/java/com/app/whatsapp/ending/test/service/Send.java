@@ -40,7 +40,7 @@ public class Send {
     OkHttpClient client = new OkHttpClient().newBuilder()
             .build();
 
-    String token = "EAADz6AF76ZA4BOxQZAZCft95bxIbC269z2n2Ne20kjPxXHfVUtnXCiOZABZBHuyijaFv7sBphhmB28CHPA03FNFcQPu6T2XN0nYr4uUVPflCXx3TZATnr2rgCiZBosBwMDZArYw6F1gY9BpfnrxjHjv3WFx2GEggK0aJ9NHZBfgIQ5wwQfdw9liP95bw5teOXqAkohtdjHBTLuAsg95zNxHkZD";
+    String token = "EAADz6AF76ZA4BO8gmTSB05oyCztc1FZAT4IPJhBUZBZCb8n4upDPvwvtHixA4uwqux6X1BqAatFAWYZAWOHmBQ0PZCddvHKm5VxjEzlMfspEf7tfIxhcn5qIgu1vbGCvKBuUEspnV0zZBmu8sYN7FIABf5xp8Co6RDRCAjKsV2QrEkOME4dKZCz1jb8sUOqd3q4ZBtLfA2jZBLsGvtECpyTrlc";
     String facebookUrl = "https://graph.facebook.com/v17.0/108928785480520/messages";
 
     public OkWhatsappResponseDto templateToClient(String phone) throws IOException {

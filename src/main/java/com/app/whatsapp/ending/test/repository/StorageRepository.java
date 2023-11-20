@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Transactional
 public interface StorageRepository extends JpaRepository<ImageData, Long> {
-    @Query(value = "SELECT * FROM image_data WHERE whatsapp_id=?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM image_data.* WHERE whatsapp_id=?1", nativeQuery = true)
     ImageData findByWhatsapp_id(String id);
 }

@@ -35,6 +35,7 @@ public class WhatsappMessageEntity {
     private String whatsapp_id;
     private String image_type;
     @Lob
+    @JsonIgnore
     //@Column(name = "imagedata",length = 1000)
     private byte[] image_data;
 

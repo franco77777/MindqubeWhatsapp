@@ -1,5 +1,6 @@
 package com.app.whatsapp.ending.test.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,11 +24,14 @@ import lombok.Setter;
 public class ImageData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @Lob
-    @Column(name = "imagedata")
-    private byte[] imageData;
+    @Column(name = "image_data")
+    private byte[] image_data;
+    @Column(name = "type")
     private String type;
+    @Column(name = "whatsapp_id")
     private String whatsapp_id;
 
 }

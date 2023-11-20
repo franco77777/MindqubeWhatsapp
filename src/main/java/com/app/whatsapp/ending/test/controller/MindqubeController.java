@@ -12,7 +12,6 @@ import com.app.whatsapp.ending.test.entity.WhatsappMessageEntity;
 import com.app.whatsapp.ending.test.repository.IUserRepository;
 import com.app.whatsapp.ending.test.repository.IWhatsappRepository;
 import com.app.whatsapp.ending.test.repository.StorageRepository;
-import com.app.whatsapp.ending.test.service.ImageUtils;
 import com.app.whatsapp.ending.test.service.MindqubeService;
 import com.app.whatsapp.ending.test.service.Send;
 import com.app.whatsapp.ending.test.service.StorageService;
@@ -100,7 +99,7 @@ public class MindqubeController {
 
         var imageDb = ImageData.builder()
                 .whatsapp_id("wamid.HBgNNTQ5Mzg3NTYxMDYwNhUCABIYFjNFQjA1QTYwQzE5Q0VENDc0M0I4NDEA")
-                .imageData(image)
+                .image_data(image)
                 .build();
 
         storageRepository.save(imageDb);
@@ -113,32 +112,6 @@ public class MindqubeController {
                 .body(image);
     }
 
-
-    public byte[] sendMessageReady(String url) {
-
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-
-                    .uri(new URI(url))
-                    .header("Authorization", "Bearer EAADz6AF76ZA4BOxQZAZCft95bxIbC269z2n2Ne20kjPxXHfVUtnXCiOZABZBHuyijaFv7sBphhmB28CHPA03FNFcQPu6T2XN0nYr4uUVPflCXx3TZATnr2rgCiZBosBwMDZArYw6F1gY9BpfnrxjHjv3WFx2GEggK0aJ9NHZBfgIQ5wwQfdw9liP95bw5teOXqAkohtdjHBTLuAsg95zNxHkZD")
-                    .header("Content-Type", "application/json")
-                    //.POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"template\", \"template\": { \"name\": \"hello_world\", \"language\": { \"code\": \"en_US\" } } }"))
-
-                    .build();
-            HttpClient http = HttpClient.newHttpClient();
-            HttpResponse<byte[]> response = http.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            System.out.println("soy response body");
-            System.out.println(response.body());
-            return response.body();
-
-
-        } catch (URISyntaxException | IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("nothing happened");
-        return null;
-    }
-
     @GetMapping("image")
     ResponseEntity<byte[]> getimagen(@RequestParam String id) {
         WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
@@ -147,6 +120,26 @@ public class MindqubeController {
                 .contentType(MediaType.valueOf(message.getImage_type()))
                 //.contentType(MediaType.valueOf("image/jpeg"))
                 .body(message.getImage_data());
+    }
+
+
+    @GetMapping("imageTest")
+    ResponseEntity<byte[]> getimage2n(@RequestParam String id) {
+
+        ImageData image = storageRepository.findByWhatsapp_id(id);
+        return ResponseEntity.status(HttpStatus.OK)
+
+                .contentType(MediaType.valueOf("image/jpeg"))
+                .body(image.getImage_data());
+    }
+
+
+    @GetMapping("imageAll")
+    ResponseEntity<ImageData> getimagen2(@RequestParam String id) {
+        //WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
+        ImageData image = storageRepository.findByWhatsapp_id(id);
+        return ResponseEntity.ok(image);
+
     }
 
 
