@@ -1,6 +1,8 @@
 package com.app.whatsapp.ending.test.controller;
 
+import com.app.whatsapp.ending.test.dto.OkWhatsappImageDto;
 import com.app.whatsapp.ending.test.dto.WebsocketMessageDto;
+import com.app.whatsapp.ending.test.dto.WhatsappImageDto;
 import com.app.whatsapp.ending.test.dto.WhatsappResponseDto;
 
 import com.app.whatsapp.ending.test.dto.WhatsappStatusesDto;
@@ -51,8 +53,8 @@ public class WhatsappController {
 
     @GetMapping()
     ResponseEntity<String> receive(@RequestParam(value = "hub.mode") String mode,
-            @RequestParam(value = "hub.challenge") String challenge,
-            @RequestParam(value = "hub.verify_token") String token) {
+                                   @RequestParam(value = "hub.challenge") String challenge,
+                                   @RequestParam(value = "hub.verify_token") String token) {
         String myToken = "password";
 
         if (token != null && mode != null) {
@@ -69,14 +71,19 @@ public class WhatsappController {
     }
 
     @PostMapping()
-    ResponseEntity<String> whatsappPayload(@RequestBody WhatsappResponseDto payload) throws JsonProcessingException {
+    ResponseEntity<String> whatsappPayload(@RequestBody WhatsappResponseDto payload) throws IOException {
         List<WhatsappStatusesDto> statuses = payload.getEntry().get(0).getChanges().get(0).getValue().getStatuses();
         WhatsappValueDto value = payload.getEntry().get(0).getChanges().get(0).getValue();
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(payload));
         if (statuses == null) { // this is for users messages received
             Optional<UserEntity> user = whatsappService.userAlreadyExists(value);
+            WhatsappImageDto image = value.getMessages().get(0).getImage();
             if (user.isPresent()) {
+                if (image != null) {
+                    OkWhatsappImageDto imageResponse = send.imageIdToWhatsapp(image);
+                    //byte[] imageBinarie = send.imageUrlToWhatsapp(imageResponse.getUrl());
+                }
                 WhatsappMessageEntity messageSaved = whatsappService.saveClientMessage(user.orElseThrow(), value);
                 WebsocketMessageDto socketMessage = websocketService.newMessage(messageSaved,
                         user);

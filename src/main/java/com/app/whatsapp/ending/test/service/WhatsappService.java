@@ -46,6 +46,20 @@ public class WhatsappService {
 
     }
 
+    public WhatsappMessageEntity saveClientImage(UserEntity user, WhatsappValueDto value) {
+        WhatsappMessageEntity whatsappMessageEntity = WhatsappMessageEntity.builder()
+                .name(value.getContacts().get(0).getProfile().getName())
+                .whatsapp_id(value.getMessages().get(0).getId())
+                .message("im the image")
+                .status("received")
+                .timestamp(value.getMessages().get(0).getTimestamp())
+
+                .user(user)
+                .build();
+        return whatsappRepository.save(whatsappMessageEntity);
+
+    }
+
     public UserEntity createUser(WhatsappValueDto value) {
         var newUser = UserEntity.builder()
                 .name(value.getContacts().get(0).getProfile().getName())

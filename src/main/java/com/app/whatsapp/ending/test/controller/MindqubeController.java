@@ -12,12 +12,15 @@ import com.app.whatsapp.ending.test.repository.IWhatsappRepository;
 import com.app.whatsapp.ending.test.service.MindqubeService;
 import com.app.whatsapp.ending.test.service.Send;
 import lombok.RequiredArgsConstructor;
+import okhttp3.ResponseBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -60,6 +63,15 @@ public class MindqubeController {
     @GetMapping("/test2")
     ResponseEntity<String> testing() {
         return ResponseEntity.ok("working");
+    }
+
+
+    @GetMapping("/testByte")
+    ResponseEntity<String> testing2(@RequestParam String url) throws IOException {
+        String image = send.imageUrlToWhatsapp(url);
+        System.out.println("im image of controller");
+        System.out.println(image);
+        return ResponseEntity.ok(image);
     }
 
 }
