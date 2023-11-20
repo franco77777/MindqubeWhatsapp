@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -102,6 +104,7 @@ public class Send {
         }
 
         public Response imageUrlToWhatsapp(String url) throws IOException {
+
                 objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
                 objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
                                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
@@ -111,12 +114,17 @@ public class Send {
                 RequestBody body = RequestBody.create(mediaType, "");
                 Request request = new Request.Builder()
                                 .url(url)
-                                .method("GET", body)
+
                                 .addHeader("Authorization", "Bearer " + token)
+                                .addHeader("Content-Type", "text/plain")
                                 .build();
                 Response response = client.newCall(request).execute();
-                System.out.println("soy response de send");
-                System.out.println("response");
+                System.out.println("soy mapper");
+                System.out.println(objectMapper.writerWithDefaultPrettyPrinter()
+                                .writeValueAsString(response.body().toString()));
+                // byte[] result = objectMapper.readValue(response, byte[].class);
+                // System.out.println("soy result");
+                // System.out.println(result);
                 return response;
         }
 
