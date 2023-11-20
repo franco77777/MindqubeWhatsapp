@@ -94,15 +94,16 @@ public class Send {
     }
 
     public OkWhatsappImageDto imageIdToWhatsapp(WhatsappImageDto image) throws IOException {
+        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
         String imageId = image.getId();
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "");
         Request request = new Request.Builder()
                 .url("https://graph.facebook.com/v17.0/" + imageId + "?phone_number_id=108928785480520")
-                .method("GET", body)
                 .addHeader("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
                 .build();
         String response = client.newCall(request).execute().body().string();
         return objectMapper.readValue(response, OkWhatsappImageDto.class);
