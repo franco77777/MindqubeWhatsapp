@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Optional;
+import okhttp3.Response;
 
 @RestController
 @RequestMapping("/chat")
@@ -65,10 +66,9 @@ public class MindqubeController {
         return ResponseEntity.ok("working");
     }
 
-
     @GetMapping("/testByte")
-    ResponseEntity<String> testing2(@RequestParam String url) throws IOException {
-        String image = send.imageUrlToWhatsapp(url);
+    ResponseEntity<Response> testing2(@RequestParam String url) throws IOException {
+        Response image = send.imageUrlToWhatsapp(url);
         System.out.println("im image of controller");
         System.out.println(image);
         return ResponseEntity.ok(image);
