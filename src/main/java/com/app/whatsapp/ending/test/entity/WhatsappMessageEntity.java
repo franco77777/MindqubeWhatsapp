@@ -1,6 +1,7 @@
 package com.app.whatsapp.ending.test.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,6 +37,7 @@ public class WhatsappMessageEntity {
     private String image_type;
     @Lob
     @JsonIgnore
+    @Basic(fetch = FetchType.LAZY)
     //@Column(name = "imagedata",length = 1000)
     private byte[] image_data;
 

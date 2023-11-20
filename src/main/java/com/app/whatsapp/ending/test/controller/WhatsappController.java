@@ -16,6 +16,7 @@ import com.app.whatsapp.ending.test.service.WebsocketService;
 import com.app.whatsapp.ending.test.service.WhatsappService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,6 +47,7 @@ public class WhatsappController {
     private final Send send;
 
     @GetMapping("/users")
+    @Transactional
     ResponseEntity<List<UserEntity>> listOfUsers() {
         List<UserEntity> users = userRepository.findAll();
         return ResponseEntity.ok(users);
