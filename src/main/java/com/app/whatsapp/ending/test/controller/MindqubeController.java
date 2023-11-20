@@ -4,6 +4,7 @@ import com.app.whatsapp.ending.test.dto.MindqubeMessageDto;
 import com.app.whatsapp.ending.test.dto.MindqubeMessageResponseDto;
 import com.app.whatsapp.ending.test.dto.MindqubeMessageTemplateDto;
 import com.app.whatsapp.ending.test.dto.OkWhatsappResponseDto;
+import com.app.whatsapp.ending.test.dto.TestingDto;
 import com.app.whatsapp.ending.test.entity.UserEntity;
 
 import com.app.whatsapp.ending.test.entity.WhatsappMessageEntity;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Optional;
+
 import okhttp3.Response;
 
 @RestController
@@ -67,11 +69,11 @@ public class MindqubeController {
     }
 
     @GetMapping("/testByte")
-    ResponseEntity<Response> testing2(@RequestParam String url) throws IOException {
-        Response image = send.imageUrlToWhatsapp(url);
+    ResponseEntity<String> testing2(@RequestBody TestingDto url) throws IOException {
+        Response image = send.imageUrlToWhatsapp(url.getUrl());
         System.out.println("im image of controller");
         System.out.println(image);
-        return ResponseEntity.ok(image);
+        return ResponseEntity.ok(url.getUrl());
     }
 
 }
