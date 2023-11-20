@@ -28,5 +28,6 @@ public class ImageData {
     @Column(name = "imagedata")
     private byte[] imageData;
     private String type;
-    private String name;
+    private String whatsapp_id;
+
 }

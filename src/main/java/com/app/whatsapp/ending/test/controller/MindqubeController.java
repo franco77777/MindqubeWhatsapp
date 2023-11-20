@@ -88,17 +88,19 @@ public class MindqubeController {
 
     private final StorageRepository storageRepository;
 
+
     @GetMapping("/testByte")
     ResponseEntity<byte[]> testing2(@RequestBody ImageRequestDto url) throws IOException {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
         //Response image = send.imageUrlToWhatsapp(url.getUrl());
-        byte[] image = sendMessageReady(url.getImageId());
-        byte[] imageCompressed = ImageUtils.compressImage(image);
+        byte[] image = send.imageUrlToWhatsapp2(url.getImageId());
+
 
         var imageDb = ImageData.builder()
-                .imageData(imageCompressed)
+                .whatsapp_id("wamid.HBgNNTQ5Mzg3NTYxMDYwNhUCABIYFjNFQjA1QTYwQzE5Q0VENDc0M0I4NDEA")
+                .imageData(image)
                 .build();
 
         storageRepository.save(imageDb);
@@ -137,12 +139,15 @@ public class MindqubeController {
         return null;
     }
 
-    @GetMapping("image/{imageId}")
-    ResponseEntity<byte[]> getimagen(@RequestParam String imageId) {
-        WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(imageId);
+    @GetMapping("image")
+    ResponseEntity<byte[]> getimagen(@RequestParam String id) {
+        WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
+        //ImageData image = storageRepository.findByWhatsapp_id(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf(message.getImage_type()))
+                //.contentType(MediaType.valueOf("image/jpeg"))
                 .body(message.getImage_data());
     }
+
 
 }

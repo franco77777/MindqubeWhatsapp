@@ -134,6 +134,31 @@ public class Send {
         return null;
     }
 
+    public byte[] imageUrlToWhatsapp2(String url) throws IOException {
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+
+                    .uri(new URI(url))
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    //.POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"template\", \"template\": { \"name\": \"hello_world\", \"language\": { \"code\": \"en_US\" } } }"))
+
+                    .build();
+            HttpClient http = HttpClient.newHttpClient();
+            HttpResponse<byte[]> response = http.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            System.out.println("soy response body");
+            System.out.println(response.body());
+            return response.body();
+
+
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("nothing happened");
+        return null;
+    }
+
     public Welcome morty() throws IOException {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
