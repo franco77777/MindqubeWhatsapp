@@ -36,6 +36,7 @@ public class WhatsappService {
     }
 
     public WhatsappMessageEntity saveClientMessage(UserEntity user, WhatsappValueDto value) {
+
         WhatsappMessageEntity whatsappMessageEntity = WhatsappMessageEntity.builder()
                 .name(value.getContacts().get(0).getProfile().getName())
                 .whatsapp_id(value.getMessages().get(0).getId())
@@ -48,14 +49,14 @@ public class WhatsappService {
 
     }
 
+
     public WhatsappMessageEntity saveClientImage(UserEntity user, WhatsappValueDto value) {
         WhatsappMessageEntity whatsappMessageEntity = WhatsappMessageEntity.builder()
                 .name(value.getContacts().get(0).getProfile().getName())
                 .whatsapp_id(value.getMessages().get(0).getId())
-                .message("im the image")
+                .message(value.getMessages().get(0).getImage().getCaption())
                 .status("received")
                 .timestamp(value.getMessages().get(0).getTimestamp())
-
                 .user(user)
                 .build();
         return whatsappRepository.save(whatsappMessageEntity);
@@ -86,7 +87,7 @@ public class WhatsappService {
         return newUser;
     }
 
-    public WhatsappMessageEntity saveClientImage(byte[] imageBinarie, OkWhatsappImageDto imageResponse, WhatsappValueDto value, Optional<UserEntity> user) {
+    public WhatsappMessageEntity saveClientImage(byte[] imageBinarie, OkWhatsappImageDto imageResponse, WhatsappValueDto value, UserEntity user) {
         String type = imageResponse.getMime_type();
         var imageMessage = WhatsappMessageEntity.builder()
                 .name(value.getContacts().get(0).getProfile().getName())
@@ -95,7 +96,7 @@ public class WhatsappService {
                 .timestamp(value.getMessages().get(0).getTimestamp())
                 .image_data(imageBinarie)
                 .whatsapp_id(value.getMessages().get(0).getId())
-                .user(user.orElseThrow())
+                .user(user)
                 .image_type(type)
                 .build();
 

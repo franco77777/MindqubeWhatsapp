@@ -3,9 +3,11 @@ package com.app.whatsapp.ending.test.controller;
 import com.app.whatsapp.ending.test.dto.OkWhatsappImageDto;
 import com.app.whatsapp.ending.test.dto.WebsocketMessageDto;
 import com.app.whatsapp.ending.test.dto.WhatsappImageDto;
+import com.app.whatsapp.ending.test.dto.WhatsappMessagesDto;
 import com.app.whatsapp.ending.test.dto.WhatsappResponseDto;
 
 import com.app.whatsapp.ending.test.dto.WhatsappStatusesDto;
+import com.app.whatsapp.ending.test.dto.WhatsappTextDto;
 import com.app.whatsapp.ending.test.dto.WhatsappValueDto;
 import com.app.whatsapp.ending.test.entity.UserEntity;
 import com.app.whatsapp.ending.test.entity.WhatsappMessageEntity;
@@ -81,29 +83,43 @@ public class WhatsappController {
         if (statuses == null) { // this is for users messages received
             Optional<UserEntity> user = whatsappService.userAlreadyExists(value);
             WhatsappImageDto image = value.getMessages().get(0).getImage();
+            WhatsappTextDto text = value.getMessages().get(0).getText();
 
             if (user.isPresent()) {
                 if (image != null) {
                     OkWhatsappImageDto imageResponse = send.imageIdToWhatsapp(image);
                     byte[] imageBinarie = send.imageUrlToWhatsapp(imageResponse);
-                    WhatsappMessageEntity imageMessageSaved = whatsappService.saveClientImage(imageBinarie, imageResponse, value, user);
+                    WhatsappMessageEntity imageMessageSaved = whatsappService.saveClientImage(imageBinarie, imageResponse, value, user.orElseThrow());
                     WebsocketMessageDto socketMessage = websocketService.newMessage(imageMessageSaved, user);
                     messagingTemplate.convertAndSend("/topic/public", socketMessage);
                     return ResponseEntity.ok("image message user saved");
 
                 }
+                if (text != null) {
+                    WhatsappMessageEntity messageSaved = whatsappService.saveClientMessage(user.orElseThrow(), value);
+                    WebsocketMessageDto socketMessage = websocketService.newMessage(messageSaved,
+                            user);
+                    messagingTemplate.convertAndSend("/topic/public", socketMessage);
+                    return ResponseEntity.ok("message user saved");
+                }
 
-                WhatsappMessageEntity messageSaved = whatsappService.saveClientMessage(user.orElseThrow(), value);
-                WebsocketMessageDto socketMessage = websocketService.newMessage(messageSaved,
-                        user);
-                messagingTemplate.convertAndSend("/topic/public", socketMessage);
-                return ResponseEntity.ok("message user saved");
+
             } else {
                 UserEntity newUser = whatsappService.createUser(value);
-                WhatsappMessageEntity messageSaved = whatsappService.saveClientMessage(newUser, value);
-                WebsocketMessageDto socketMessage = websocketService.newUserMessage(messageSaved, newUser);
-                messagingTemplate.convertAndSend("/topic/public", socketMessage);
-                return ResponseEntity.ok("new user and message saved");
+                if (image != null) {
+                    OkWhatsappImageDto imageResponse = send.imageIdToWhatsapp(image);
+                    byte[] imageBinarie = send.imageUrlToWhatsapp(imageResponse);
+                    WhatsappMessageEntity imageMessageSaved = whatsappService.saveClientImage(imageBinarie, imageResponse, value, newUser);
+                    WebsocketMessageDto socketMessage = websocketService.newUserMessage(imageMessageSaved, newUser);
+                    messagingTemplate.convertAndSend("/topic/public", socketMessage);
+                    return ResponseEntity.ok("new user and image saved");
+                }
+                if (text != null) {
+                    WhatsappMessageEntity messageSaved = whatsappService.saveClientMessage(newUser, value);
+                    WebsocketMessageDto socketMessage = websocketService.newUserMessage(messageSaved, newUser);
+                    messagingTemplate.convertAndSend("/topic/public", socketMessage);
+                    return ResponseEntity.ok("new user and message saved");
+                }
             }
         } else { // this is for mindqube message sent
             WhatsappMessageEntity messageUpdated = whatsappService.updateMessage(value);
@@ -112,6 +128,7 @@ public class WhatsappController {
             return ResponseEntity.ok("message updated");
             // messagingTemplate.convertAndSend("/topic/public", messageToSend);
         }
+        return ResponseEntity.ok("data type already doesn't exist");
     }
 
     @PostMapping("/test")
