@@ -1,5 +1,7 @@
 package com.app.whatsapp.ending.test.service;
 
+import com.app.whatsapp.ending.test.dto.OkWhatsappImageDto;
+import com.app.whatsapp.ending.test.dto.WhatsappImageDto;
 import com.app.whatsapp.ending.test.dto.WhatsappValueDto;
 import com.app.whatsapp.ending.test.entity.UserEntity;
 import com.app.whatsapp.ending.test.entity.WhatsappMessageEntity;
@@ -82,5 +84,21 @@ public class WhatsappService {
         messageList.add(messageSaved);
         newUser.setWhatsapp(messageList);
         return newUser;
+    }
+
+    public WhatsappMessageEntity saveClientImage(byte[] imageBinarie, OkWhatsappImageDto imageResponse, WhatsappValueDto value, Optional<UserEntity> user) {
+        String type = imageResponse.getMime_type();
+        var imageMessage = WhatsappMessageEntity.builder()
+                .name(value.getContacts().get(0).getProfile().getName())
+                .message(value.getMessages().get(0).getImage().getCaption())
+                .status("received")
+                .timestamp(value.getMessages().get(0).getTimestamp())
+                .image_data(imageBinarie)
+                .whatsapp_id(value.getMessages().get(0).getId())
+                .user(user.orElseThrow())
+                .image_type(type)
+                .build();
+
+        return whatsappRepository.save(imageMessage);
     }
 }

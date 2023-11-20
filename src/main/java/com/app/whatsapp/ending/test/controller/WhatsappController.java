@@ -79,11 +79,18 @@ public class WhatsappController {
         if (statuses == null) { // this is for users messages received
             Optional<UserEntity> user = whatsappService.userAlreadyExists(value);
             WhatsappImageDto image = value.getMessages().get(0).getImage();
+
             if (user.isPresent()) {
                 if (image != null) {
                     OkWhatsappImageDto imageResponse = send.imageIdToWhatsapp(image);
-                    //byte[] imageBinarie = send.imageUrlToWhatsapp(imageResponse.getUrl());
+                    byte[] imageBinarie = send.imageUrlToWhatsapp(imageResponse);
+                    WhatsappMessageEntity imageMessageSaved = whatsappService.saveClientImage(imageBinarie, imageResponse, value, user);
+                    WebsocketMessageDto socketMessage = websocketService.newMessage(imageMessageSaved, user);
+                    messagingTemplate.convertAndSend("/topic/public", socketMessage);
+                    return ResponseEntity.ok("image message user saved");
+
                 }
+
                 WhatsappMessageEntity messageSaved = whatsappService.saveClientMessage(user.orElseThrow(), value);
                 WebsocketMessageDto socketMessage = websocketService.newMessage(messageSaved,
                         user);

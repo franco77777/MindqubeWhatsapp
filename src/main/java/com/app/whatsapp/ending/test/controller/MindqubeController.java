@@ -4,7 +4,7 @@ import com.app.whatsapp.ending.test.dto.MindqubeMessageDto;
 import com.app.whatsapp.ending.test.dto.MindqubeMessageResponseDto;
 import com.app.whatsapp.ending.test.dto.MindqubeMessageTemplateDto;
 import com.app.whatsapp.ending.test.dto.OkWhatsappResponseDto;
-import com.app.whatsapp.ending.test.dto.TestingDto;
+import com.app.whatsapp.ending.test.dto.ImageRequestDto;
 import com.app.whatsapp.ending.test.entity.ImageData;
 import com.app.whatsapp.ending.test.entity.UserEntity;
 
@@ -21,32 +21,25 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
 import lombok.RequiredArgsConstructor;
-import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
 import java.util.Optional;
-
-import okhttp3.Response;
 
 @RestController
 @RequestMapping("/chat")
@@ -96,12 +89,12 @@ public class MindqubeController {
     private final StorageRepository storageRepository;
 
     @GetMapping("/testByte")
-    ResponseEntity<byte[]> testing2(@RequestBody TestingDto url) throws IOException {
+    ResponseEntity<byte[]> testing2(@RequestBody ImageRequestDto url) throws IOException {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
         //Response image = send.imageUrlToWhatsapp(url.getUrl());
-        byte[] image = sendMessageReady(url.getUrl());
+        byte[] image = sendMessageReady(url.getImageId());
         byte[] imageCompressed = ImageUtils.compressImage(image);
 
         var imageDb = ImageData.builder()
@@ -144,12 +137,12 @@ public class MindqubeController {
         return null;
     }
 
-    @GetMapping("testByteGet")
-    ResponseEntity<byte[]> getimagen() {
-        ImageData image = storageRepository.findById(1L).orElseThrow();
+    @GetMapping("image/{imageId}")
+    ResponseEntity<byte[]> getimagen(@RequestParam String imageId) {
+        WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(imageId);
         return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/jpeg"))
-                .body(image.getImageData());
+                .contentType(MediaType.valueOf(message.getImage_type()))
+                .body(message.getImage_data());
     }
 
 }

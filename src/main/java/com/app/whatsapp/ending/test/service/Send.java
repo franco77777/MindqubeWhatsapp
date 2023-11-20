@@ -23,6 +23,11 @@ import okhttp3.Response;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 /**
  * @author aresis
@@ -103,29 +108,29 @@ public class Send {
         return objectMapper.readValue(response, OkWhatsappImageDto.class);
     }
 
-    public Response imageUrlToWhatsapp(String url) throws IOException {
+    public byte[] imageUrlToWhatsapp(OkWhatsappImageDto imageResponse) throws IOException {
+        String url = imageResponse.getUrl();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
 
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create(mediaType, "");
-        Request request = new Request.Builder()
-                .url(url)
+                    .uri(new URI(url))
+                    .header("Authorization", "Bearer " + token)
+                    .header("Content-Type", "application/json")
+                    //.POST(HttpRequest.BodyPublishers.ofString("{ \"messaging_product\": \"whatsapp\", \"recipient_type\": \"individual\", \"to\": \""+number+"\", \"type\": \"template\", \"template\": { \"name\": \"hello_world\", \"language\": { \"code\": \"en_US\" } } }"))
 
-                .addHeader("Authorization", "Bearer " + token)
-                .addHeader("Content-Type", "text/plain")
-                .build();
-        Response response = client.newCall(request).execute();
-        System.out.println("soy mapper");
-        System.out.println(objectMapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(response.body().toString()));
-        // byte[] result = objectMapper.readValue(response, byte[].class);
-        // System.out.println("soy result");
-        // System.out.println(result);
-        return response;
+                    .build();
+            HttpClient http = HttpClient.newHttpClient();
+            HttpResponse<byte[]> response = http.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            System.out.println("soy response body");
+            System.out.println(response.body());
+            return response.body();
+
+
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("nothing happened");
+        return null;
     }
 
     public Welcome morty() throws IOException {
