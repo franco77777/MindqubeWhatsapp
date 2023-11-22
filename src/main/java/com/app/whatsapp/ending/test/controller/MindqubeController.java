@@ -77,24 +77,25 @@ public class MindqubeController {
     }
 
     @PostMapping("image")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam String id) throws IOException {
+    public ResponseEntity<MindqubeMessageResponseDto> uploadImage(@RequestParam("image") MultipartFile file,
+            @RequestParam String id) throws IOException {
         UserEntity user = userRepository.findById(Long.parseLong(id)).orElseThrow();
         WhatsappMessageEntity uploadImage = service.uploadImage(file, user);
         OkWhatsappResponseDto result = send.ImageToClient(user, uploadImage);
         WhatsappMessageEntity addMessageId = mindqubeService.addMessageId(result, uploadImage);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
+        MindqubeMessageResponseDto response = mindqubeService.setMessageForClient(user, addMessageId);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("image")
     ResponseEntity<byte[]> getimagen(@RequestParam String id) {
-        //WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
+        // WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
         WhatsappMessageEntity message = whatsappRepository.findById(Long.parseLong(id)).orElseThrow();
-        //byte[] response = service.downloadImage(id);
-        //ImageData image = storageRepository.findByWhatsapp_id(id);
+        // byte[] response = service.downloadImage(id);
+        // ImageData image = storageRepository.findByWhatsapp_id(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf(message.getImage_type()))
-                //.contentType(MediaType.valueOf("image/jpeg"))
+                // .contentType(MediaType.valueOf("image/jpeg"))
                 .body(message.getImage_data());
     }
 
@@ -103,58 +104,55 @@ public class MindqubeController {
         return ResponseEntity.ok("working");
     }
 
+    // @Autowired
+    // private StorageService service;
+    //
+    // ObjectMapper objectMapper = new ObjectMapper();
+    //
+    // private final StorageRepository storageRepository;
 
-//    @Autowired
-//    private StorageService service;
-//
-//    ObjectMapper objectMapper = new ObjectMapper();
-//
-//    private final StorageRepository storageRepository;
+    // @GetMapping("/testByte")
+    // ResponseEntity<byte[]> testing2(@RequestBody ImageRequestDto url) throws
+    // IOException {
+    // objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    // objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
+    // .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
+    // //Response image = send.imageUrlToWhatsapp(url.getUrl());
+    // byte[] image = send.imageUrlToWhatsapp2(url.getImageId());
+    //
+    //
+    // var imageDb = ImageData.builder()
+    // .whatsapp_id("wamid.HBgNNTQ5Mzg3NTYxMDYwNhUCABIYFjNFQjA1QTYwQzE5Q0VENDc0M0I4NDEA")
+    // .image_data(image)
+    // .build();
+    //
+    // storageRepository.save(imageDb);
+    // //byte[] imageData = service.downloadImage(image.toString());
+    // //byte[] result = objectMapper.readValue(Arrays.toString(image),
+    // byte[].class);
+    // System.out.println("soy result");
+    // System.out.println(image);
+    // return ResponseEntity.status(HttpStatus.OK)
+    // .contentType(MediaType.valueOf("image/jpeg"))
+    // .body(image);
+    // }
 
+    // @GetMapping("imageTest")
+    // ResponseEntity<byte[]> getimage2n(@RequestParam String id) {
+    //
+    // ImageData image = storageRepository.findByWhatsapp_id(id);
+    // return ResponseEntity.status(HttpStatus.OK)
+    //
+    // .contentType(MediaType.valueOf("image/jpeg"))
+    // .body(image.getImage_data());
+    // }
 
-//    @GetMapping("/testByte")
-//    ResponseEntity<byte[]> testing2(@RequestBody ImageRequestDto url) throws IOException {
-//        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-//        objectMapper.setVisibility(VisibilityChecker.Std.defaultInstance()
-//                .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
-//        //Response image = send.imageUrlToWhatsapp(url.getUrl());
-//        byte[] image = send.imageUrlToWhatsapp2(url.getImageId());
-//
-//
-//        var imageDb = ImageData.builder()
-//                .whatsapp_id("wamid.HBgNNTQ5Mzg3NTYxMDYwNhUCABIYFjNFQjA1QTYwQzE5Q0VENDc0M0I4NDEA")
-//                .image_data(image)
-//                .build();
-//
-//        storageRepository.save(imageDb);
-//        //byte[] imageData = service.downloadImage(image.toString());
-//        //byte[] result = objectMapper.readValue(Arrays.toString(image), byte[].class);
-//        System.out.println("soy result");
-//        System.out.println(image);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.valueOf("image/jpeg"))
-//                .body(image);
-//    }
-
-
-//    @GetMapping("imageTest")
-//    ResponseEntity<byte[]> getimage2n(@RequestParam String id) {
-//
-//        ImageData image = storageRepository.findByWhatsapp_id(id);
-//        return ResponseEntity.status(HttpStatus.OK)
-//
-//                .contentType(MediaType.valueOf("image/jpeg"))
-//                .body(image.getImage_data());
-//    }
-
-
-//    @GetMapping("imageAll")
-//    ResponseEntity<ImageData> getimagen2(@RequestParam String id) {
-//        //WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
-//        ImageData image = storageRepository.findByWhatsapp_id(id);
-//        return ResponseEntity.ok(image);
-//
-//    }
-
+    // @GetMapping("imageAll")
+    // ResponseEntity<ImageData> getimagen2(@RequestParam String id) {
+    // //WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
+    // ImageData image = storageRepository.findByWhatsapp_id(id);
+    // return ResponseEntity.ok(image);
+    //
+    // }
 
 }
