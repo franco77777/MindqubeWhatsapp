@@ -23,7 +23,7 @@ public class MindqubeService {
     }
 
     public WhatsappMessageEntity saveMessage(UserEntity user, OkWhatsappResponseDto result,
-            MindqubeMessageDto payload) {
+                                             MindqubeMessageDto payload) {
         var messageEntity = WhatsappMessageEntity.builder()
                 .whatsapp_id(result.getMessages().get(0).getId())
                 .message(payload.getMessage())
@@ -35,11 +35,17 @@ public class MindqubeService {
     }
 
     public MindqubeMessageResponseDto setMessageForClient(UserEntity user,
-            WhatsappMessageEntity message) {
+                                                          WhatsappMessageEntity message) {
         return MindqubeMessageResponseDto.builder()
                 .phone(user.getPhone())
                 .message(message)
                 .build();
+
+    }
+
+    public WhatsappMessageEntity addMessageId(OkWhatsappResponseDto result, WhatsappMessageEntity uploadImage) {
+        uploadImage.setWhatsapp_id(result.getMessages().get(0).getId());
+        return whatsappRepository.save(uploadImage);
 
     }
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class WebsocketMessageDto {
+    private String whatsapp_id;
     private String phone;
     private WhatsappMessageEntity message;
     private String type;

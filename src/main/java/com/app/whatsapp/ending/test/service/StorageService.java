@@ -1,34 +1,55 @@
 package com.app.whatsapp.ending.test.service;
 
 import com.app.whatsapp.ending.test.entity.ImageData;
+import com.app.whatsapp.ending.test.entity.UserEntity;
+import com.app.whatsapp.ending.test.entity.WhatsappMessageEntity;
+import com.app.whatsapp.ending.test.repository.IUserRepository;
+import com.app.whatsapp.ending.test.repository.IWhatsappRepository;
 import com.app.whatsapp.ending.test.repository.StorageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class StorageService {
 
-    @Autowired
+
     private StorageRepository repository;
+    private final IUserRepository userRepository;
+    private final IWhatsappRepository whatsappRepository;
 
-    public String uploadImage(MultipartFile file) throws IOException {
 
-        ImageData imageData = repository.save(ImageData.builder()
+    public WhatsappMessageEntity uploadImage(MultipartFile file, UserEntity user) throws IOException {
 
-                .type(file.getContentType())
-                .image_data(ImageUtils.compressImage(file.getBytes())).build());
-        if (imageData != null) {
-            return "file uploaded successfully : " + file.getOriginalFilename();
-        }
-        return null;
+        byte[] imageCompressed = ImageUtils.compressImage(file.getBytes());
+
+        var message = WhatsappMessageEntity.builder()
+                .image_data(downloadImage(imageCompressed))
+                .name("Mindqube")
+                .whatsapp_id("empty")
+                .image_type(file.getContentType())
+                .user(user)
+                //.timestamp()
+                .build();
+
+        return whatsappRepository.save(message);
+
+
     }
 
-//    public byte[] downloadImage(String fileName) {
-//        Optional<ImageData> dbImageData = repository.findByName(fileName);
-//        byte[] images = ImageUtils.decompressImage(dbImageData.get().getImageData());
-//        return images;
+//    public byte[] downloadImage(String id) {
+//        Optional<WhatsappMessageEntity> dbImageData = whatsappRepository.findById(Long.parseLong(id));
+//        return ImageUtils.decompressImage(dbImageData.get().getImage_data());
 //    }
+
+    public byte[] downloadImage(byte[] image) {
+        //Optional<WhatsappMessageEntity> dbImageData = whatsappRepository.findById(Long.parseLong(id));
+        return ImageUtils.decompressImage(image);
+    }
+
 }

@@ -8,6 +8,8 @@ import com.app.whatsapp.ending.test.dto.OkWhatsappImageDto;
 import com.app.whatsapp.ending.test.dto.OkWhatsappResponseDto;
 import com.app.whatsapp.ending.test.dto.Welcome;
 import com.app.whatsapp.ending.test.dto.WhatsappImageDto;
+import com.app.whatsapp.ending.test.entity.UserEntity;
+import com.app.whatsapp.ending.test.entity.WhatsappMessageEntity;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +44,7 @@ public class Send {
 
     String token = "EAADz6AF76ZA4BO8gmTSB05oyCztc1FZAT4IPJhBUZBZCb8n4upDPvwvtHixA4uwqux6X1BqAatFAWYZAWOHmBQ0PZCddvHKm5VxjEzlMfspEf7tfIxhcn5qIgu1vbGCvKBuUEspnV0zZBmu8sYN7FIABf5xp8Co6RDRCAjKsV2QrEkOME4dKZCz1jb8sUOqd3q4ZBtLfA2jZBLsGvtECpyTrlc";
     String facebookUrl = "https://graph.facebook.com/v17.0/108928785480520/messages";
+    String imageUrl = "https://wa.mindqube.com/chat/image?id=";
 
     public OkWhatsappResponseDto templateToClient(String phone) throws IOException {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -172,6 +175,22 @@ public class Send {
 
         return result;
 
+    }
+
+    public OkWhatsappResponseDto ImageToClient(UserEntity user, WhatsappMessageEntity uploadImage) throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\n    \"messaging_product\": \"whatsapp\",\n    \"recipient_type\": \"individual\",\n    \"to\": \"" + user.getPhone() + "\",\n    \"type\": \"image\",\n    \"image\": {\n        \"link\": \"" + imageUrl + uploadImage.getId() + "\"\n    }\n}");
+        Request request = new Request.Builder()
+                .url(facebookUrl)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+        String response = client.newCall(request).execute().body().string();
+        OkWhatsappResponseDto result = objectMapper.readValue(response, OkWhatsappResponseDto.class);
+        return result;
     }
 
     // Response response = client.newCall(request).execute();
