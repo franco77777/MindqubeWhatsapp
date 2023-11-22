@@ -19,11 +19,11 @@ public class Runner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        var user = UserEntity.builder()
-                .name("test")
-                .phone("123")
-                .build();
-        UserEntity userEntity = userRepository.save(user);
+        // var user = UserEntity.builder()
+        // .name("test")
+        // .phone("123")
+        // .build();
+        // UserEntity userEntity = userRepository.save(user);
 
         // var messageEntity = WhatsappMessageEntity.builder()
         // .whatsapp_id("wamid.HBgNNTQ5Mzg3NTYxMDYwNhUCABEYEkE1MTRFOThFQjM5NTI1OTQ3MAA=")
