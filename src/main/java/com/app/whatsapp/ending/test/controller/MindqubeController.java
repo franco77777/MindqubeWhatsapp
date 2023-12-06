@@ -99,6 +99,18 @@ public class MindqubeController {
                 .body(message.getImage_data());
     }
 
+    @GetMapping("/user")
+    ResponseEntity<byte[]> getimagen(@RequestParam String id) {
+        // WhatsappMessageEntity message = whatsappRepository.findByWhatsapp_id(id);
+        
+        // byte[] response = service.downloadImage(id);
+        // ImageData image = storageRepository.findByWhatsapp_id(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf(message.getImage_type()))
+                // .contentType(MediaType.valueOf("image/jpeg"))
+                .body(message.getImage_data());
+    }
+
     @GetMapping("/test2")
     ResponseEntity<String> testing() {
         return ResponseEntity.ok("working");

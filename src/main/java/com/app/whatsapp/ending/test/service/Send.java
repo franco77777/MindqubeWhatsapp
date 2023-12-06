@@ -42,7 +42,7 @@ public class Send {
         OkHttpClient client = new OkHttpClient().newBuilder()
                         .build();
 
-        String token = "EAADz6AF76ZA4BOZBEDa7NKu79ITQ9F8mcJxJ6EHWt1ythbHq94OlacSMMBAkRUKSTBYcXHREjmQwzsahPFC0wRelpQIWSXOdHtt1qP8R21X5nfpsza9aHDFRHlHHhOfkiWSZCVJaEfLGge8MrL56OhM1lJcF0ZBMWu659itutXSUqT7SyfjatIdKZBoVkagU6eZCc8RaTwZCZCzR44786acZD";
+        String token = "EAADz6AF76ZA4BO8qQ1EZBRKSpZABcrlZAfO8ZBTzPhrmOUsXNOL1st78oM6ITFstBHrDmiyRGfinCvzaghpQmWQvs4jlFrVeCPDZClgEXCrG2PR4ZAqt1ofzATNbnjNhmuE09iOQM1hWc5OAl2G1T6fMRLTffZCMW6ABNR8ZAz3tR5ZBZA4m1jZCsa3kzcRfrmrFyckbr1Te6gecw3feC2Xmf6YZD";
         String facebookUrl = "https://graph.facebook.com/v17.0/108928785480520/messages";
         String imageUrl = "https://wa.mindqube.com/chat/image?id=";
 
